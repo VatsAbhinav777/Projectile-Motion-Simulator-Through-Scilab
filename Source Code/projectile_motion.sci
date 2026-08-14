@@ -1,0 +1,273 @@
+funcprot(0);
+
+function create_projectile_gui()
+    // Main window setup
+    f = figure("figure_name", "Projectile Motion Simulator", ...
+        "position", [100 50 1200 750], ...
+        "background", [0.03 0.05 0.11], ...
+        "toolbar", "none", ...
+        "menubar", "none");
+
+    // Custom figure colormap
+    f.color_map = [
+        0.03 0.05 0.11;
+        0.06 0.09 0.17;
+        0.15 0.75 0.95;
+        0.95 0.97 1.00;
+        0.14 0.20 0.32;
+        0.20 0.88 0.55;
+        0.98 0.65 0.22;
+        0.95 0.35 0.35
+    ];
+
+    // UI colors
+    bg        = [0.03 0.05 0.11];
+    card      = [0.06 0.09 0.17];
+    inputbg   = [0.85 0.93 0.98];
+    inputtext = [0.03 0.05 0.11];
+    cyan      = [0.15 0.75 0.95];
+    bluebtn   = [0.10 0.52 0.88];
+    white     = [0.95 0.97 1.00];
+    muted     = [0.50 0.58 0.70];
+    submuted  = [0.38 0.46 0.58];
+    green     = [0.20 0.88 0.55];
+    orange    = [0.98 0.65 0.22];
+
+    // Title header
+    uicontrol("parent", f, "style", "text", "position", [40 685 510 40], ...
+        "string", "PROJECTILE MOTION", "fontsize", 22, "fontweight", "bold", ...
+        "foregroundcolor", white, "backgroundcolor", bg, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "text", "position", [42 658 200 24], ...
+        "string", "SIMULATOR", "fontsize", 12, "fontweight", "bold", ...
+        "foregroundcolor", cyan, "backgroundcolor", bg, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "text", "position", [42 632 500 22], ...
+        "string", "Calculate and visualize projectile motion instantly", ...
+        "fontsize", 10, "foregroundcolor", muted, "backgroundcolor", bg, ...
+        "horizontalalignment", "left");
+
+    // Input parameters panel
+    uicontrol("parent", f, "style", "frame", "position", [40 395 510 220], ...
+        "backgroundcolor", card, "relief", "groove");
+
+    uicontrol("parent", f, "style", "text", "position", [60 572 380 26], ...
+        "string", "[ PARAMETERS ]  SIMULATION PARAMETERS", ...
+        "fontsize", 11, "fontweight", "bold", ...
+        "foregroundcolor", cyan, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    // Velocity field
+    uicontrol("parent", f, "style", "text", "position", [60 520 180 22], ...
+        "string", "Initial Velocity", "fontsize", 11, "fontweight", "bold", ...
+        "foregroundcolor", white, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "text", "position", [60 500 180 18], ...
+        "string", "Enter speed of the projectile", "fontsize", 9, ...
+        "foregroundcolor", submuted, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "edit", "position", [260 504 140 36], ...
+        "string", "50", "tag", "velocity_input", "fontsize", 13, ...
+        "fontweight", "bold", "foregroundcolor", inputtext, ...
+        "backgroundcolor", inputbg, "horizontalalignment", "center");
+
+    uicontrol("parent", f, "style", "text", "position", [415 510 60 25], ...
+        "string", "m/s", "fontsize", 11, "foregroundcolor", muted, ...
+        "backgroundcolor", card, "horizontalalignment", "left");
+
+    // Angle field
+    uicontrol("parent", f, "style", "text", "position", [60 440 180 22], ...
+        "string", "Launch Angle", "fontsize", 11, "fontweight", "bold", ...
+        "foregroundcolor", white, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "text", "position", [60 420 180 18], ...
+        "string", "Enter launch angle", "fontsize", 9, ...
+        "foregroundcolor", submuted, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "edit", "position", [260 424 140 36], ...
+        "string", "45", "tag", "angle_input", "fontsize", 13, ...
+        "fontweight", "bold", "foregroundcolor", inputtext, ...
+        "backgroundcolor", inputbg, "horizontalalignment", "center");
+
+    uicontrol("parent", f, "style", "text", "position", [415 430 80 25], ...
+        "string", "degrees", "fontsize", 11, "foregroundcolor", muted, ...
+        "backgroundcolor", card, "horizontalalignment", "left");
+
+    // Calculate button & status text
+    uicontrol("parent", f, "style", "pushbutton", ...
+        "position", [40 320 510 52], ...
+        "string", "CALCULATE TRAJECTORY", ...
+        "tag", "calculate_button", "fontsize", 13, "fontweight", "bold", ...
+        "foregroundcolor", white, ...
+        "backgroundcolor", bluebtn, ...
+        "callback", "run_simulation();");
+
+    uicontrol("parent", f, "style", "text", "position", [40 285 510 25], ...
+        "string", "[ OK ]  Simulation completed successfully.", ...
+        "tag", "status_text", "fontsize", 10, ...
+        "foregroundcolor", green, "backgroundcolor", bg, ...
+        "horizontalalignment", "center");
+
+    // Results panel
+    uicontrol("parent", f, "style", "frame", "position", [40 85 510 180], ...
+        "backgroundcolor", card, "relief", "groove");
+
+    uicontrol("parent", f, "style", "text", "position", [60 226 200 24], ...
+        "string", "[ RESULTS ]", "fontsize", 11, "fontweight", "bold", ...
+        "foregroundcolor", cyan, "backgroundcolor", card, ...
+        "horizontalalignment", "left");
+
+    // Time of Flight
+    uicontrol("parent", f, "style", "text", "position", [50 172 140 18], ...
+        "string", "TIME OF FLIGHT", "fontsize", 8, "fontweight", "bold", ...
+        "foregroundcolor", muted, "backgroundcolor", card, ...
+        "horizontalalignment", "center");
+    uicontrol("parent", f, "style", "text", "position", [50 120 140 40], ...
+        "string", "7.21 s", "tag", "flight_result", "fontsize", 16, ...
+        "fontweight", "bold", "foregroundcolor", white, ...
+        "backgroundcolor", card, "horizontalalignment", "center");
+
+    // Max Height
+    uicontrol("parent", f, "style", "text", "position", [225 172 140 18], ...
+        "string", "MAX HEIGHT", "fontsize", 8, "fontweight", "bold", ...
+        "foregroundcolor", muted, "backgroundcolor", card, ...
+        "horizontalalignment", "center");
+    uicontrol("parent", f, "style", "text", "position", [225 120 140 40], ...
+        "string", "63.71 m", "tag", "height_result", "fontsize", 16, ...
+        "fontweight", "bold", "foregroundcolor", green, ...
+        "backgroundcolor", card, "horizontalalignment", "center");
+
+    // Range
+    uicontrol("parent", f, "style", "text", "position", [390 172 150 18], ...
+        "string", "HORIZONTAL RANGE", "fontsize", 8, "fontweight", "bold", ...
+        "foregroundcolor", muted, "backgroundcolor", card, ...
+        "horizontalalignment", "center");
+    uicontrol("parent", f, "style", "text", "position", [390 120 150 40], ...
+        "string", "254.84 m", "tag", "range_result", "fontsize", 16, ...
+        "fontweight", "bold", "foregroundcolor", orange, ...
+        "backgroundcolor", card, "horizontalalignment", "center");
+
+    // Trajectory plot header and canvas
+    uicontrol("parent", f, "style", "text", "position", [580 680 580 28], ...
+        "string", "LIVE TRAJECTORY", "fontsize", 12, "fontweight", "bold", ...
+        "foregroundcolor", cyan, "backgroundcolor", bg, ...
+        "horizontalalignment", "left");
+
+    uicontrol("parent", f, "style", "text", "position", [580 655 580 22], ...
+        "string", "Visual representation of projectile motion", ...
+        "fontsize", 10, "foregroundcolor", muted, "backgroundcolor", bg, ...
+        "horizontalalignment", "left");
+
+    ax = newaxes();
+    ax.parent = f;
+    ax.axes_bounds = [0.48 0.16 0.48 0.68];
+    ax.tag = "trajectory_axes";
+
+    // Footer bar
+    uicontrol("parent", f, "style", "frame", "position", [40 20 1120 45], ...
+        "backgroundcolor", card, "relief", "groove");
+
+    uicontrol("parent", f, "style", "text", "position", [50 30 1100 25], ...
+        "string", "Ideal projectile motion  |  No air resistance  |  g = 9.81 m/s^2", ...
+        "fontsize", 10, "foregroundcolor", muted, "backgroundcolor", card, ...
+        "horizontalalignment", "center");
+
+    run_simulation();
+endfunction
+
+function run_simulation()
+    vbox   = findobj("tag", "velocity_input");
+    abox   = findobj("tag", "angle_input");
+    status = findobj("tag", "status_text");
+    tfbox  = findobj("tag", "flight_result");
+    hbox   = findobj("tag", "height_result");
+    rbox   = findobj("tag", "range_result");
+    ax     = findobj("tag", "trajectory_axes");
+
+    // Input validation
+    try
+        v = evstr(vbox.string);
+        a = evstr(abox.string);
+    catch
+        status.string = "[ ERROR ] Invalid input. Please enter valid numbers.";
+        status.foregroundcolor = [0.95 0.35 0.35];
+        return;
+    end
+
+    if isempty(v) | isempty(a) | v <= 0 | a <= 0 | a >= 90 then
+        status.string = "[ ERROR ] Enter positive velocity and angle between 0 and 90 degrees";
+        status.foregroundcolor = [0.95 0.35 0.35];
+        return;
+    end
+
+    // Physics calculations
+    g = 9.81;
+    theta = a * %pi / 180;
+
+    T = (2 * v * sin(theta)) / g;
+    H = (v^2 * sin(theta)^2) / (2 * g);
+    R = (v^2 * sin(2 * theta)) / g;
+
+    tfbox.string = msprintf("%.2f s", T);
+    hbox.string = msprintf("%.2f m", H);
+    rbox.string = msprintf("%.2f m", R);
+
+    status.string = "[ OK ] Simulation completed successfully.";
+    status.foregroundcolor = [0.20 0.88 0.55];
+
+    // Trajectory coordinates
+    x = linspace(0, R, 300);
+    y = x * tan(theta) - (g * x.^2) / (2 * v^2 * cos(theta)^2);
+
+    sca(ax);
+    delete(ax.children);
+
+    // Plot trajectory line
+    plot(x, y);
+    compound = ax.children(1);
+    polyline = compound.children(1);
+    polyline.thickness = 3;
+    polyline.foreground = 3;
+
+    // Peak and impact markers
+    plot([R/2, R], [H, 0], "o");
+    m_compound = ax.children(1);
+    m_poly = m_compound.children(1);
+    m_poly.line_mode = "off";
+    m_poly.mark_mode = "on";
+    m_poly.mark_style = 9;
+    m_poly.mark_size = 5;
+    m_poly.mark_foreground = 6;
+
+    // Plot formatting
+    ax.filled = "on";
+    ax.background = 2;
+    ax.foreground = 4;
+    ax.font_color = 4;
+    ax.font_size = 2;
+    ax.grid = [5, 5];
+    ax.box = "on";
+    ax.axes_visible = ["on", "on", "on"];
+
+    ax.data_bounds = [0, 0; max(R * 1.08, 10), max(H * 1.22, 10)];
+
+    ax.title.text = "Projectile Trajectory";
+    ax.title.font_foreground = 4;
+    ax.title.font_size = 3;
+
+    ax.x_label.text = "Horizontal Distance (m)";
+    ax.x_label.font_foreground = 4;
+    ax.x_label.font_size = 2;
+
+    ax.y_label.text = "Height (m)";
+    ax.y_label.font_foreground = 4;
+    ax.y_label.font_size = 2;
+endfunction
+
+create_projectile_gui();
