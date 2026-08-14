@@ -16,3 +16,12 @@ A modern desktop GUI built in Scilab for interactive simulation and visualizatio
 3. Load and execute the script in the Scilab console:
    ```scilab
    exec('projectile_motion.sci');
+   
+## GUI Features
+* **Custom Input Controls:** Interactive entry for Initial Velocity ($m/s$) and Launch Angle ($degrees$) with contrast-optimized text styling.
+* **Instant Trajectory Visualization:** Live 2D plot showing trajectory curves with peak apex and impact point markers.
+* **Key Metric Highlights:** Instant output displays for Time of Flight ($s$), Max Height ($m$) and Horizontal Range ($m$).
+* **Robust Input Handling:** In-app error handling catches non-numeric inputs or out-of-bound angles ($0^\circ < \theta < 90^\circ$).
+
+## References
+* Halliday, D., Resnick, R., & Walker, J. Fundamentals of Physics. Wiley.
